@@ -63,8 +63,10 @@ protected:
 private:
 
 	//Varaibles C++
-	TSubclassOf<class UUserWidget> ControlsClass;
+	TSubclassOf<class UUserWidget> CharacterControlClass;
+	TSubclassOf<class UUserWidget> CampControlClass;
 	UUserWidget* Controls;
+	
 	AArenCharacter* ControlledCharater;
 
 	//Varialbes Blueprint

@@ -16,4 +16,12 @@ AArenGameMode::AArenGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	
 }
+
+
+/*
+	Have a night and day cycle
+	Have a specific time when enemies spawn
+
+*/

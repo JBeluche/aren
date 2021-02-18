@@ -20,7 +20,7 @@ AArenPlayerController::AArenPlayerController()
 	ConstructorHelpers::FClassFinder<UUserWidget> WBPControlsCamp(TEXT("/Game/Blueprints/Widgets/WBP_ControlsCamp"));
 	
 	CharacterControlClass = WBPControlsCharacter.Class;
-	CampControlClass = WBPControlsCharacter.Class;
+	CampControlClass = WBPControlsCamp.Class;
 
 	CampPawn = nullptr;
 	
@@ -64,6 +64,7 @@ void AArenPlayerController::SetupInputComponent()
 
 	Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
 	Controls->AddToViewport();
+
 }
 
 void AArenPlayerController::OnResetVR()
@@ -141,24 +142,21 @@ void AArenPlayerController::OnSetDestinationReleased()
 void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 {
 	CurrentPawnEnum = NewPawn;
+	Controls->RemoveFromViewport();
 	UnPossess();
-
+	
 	if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
 		Possess(ControlledCharater);
-		ControlsClass = WBPControlsCharacter.Class;
-
-		UE_LOG(LogTemp, Error, TEXT("Aren Character"))
+		Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
 	}
 	else if(CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		
 		Possess(CampPawn);
-		ControlsClass = WBPControlsCamp.Class;
-
-		UE_LOG(LogTemp, Error, TEXT("Camp Pawn"))
+		Controls = CreateWidget<UUserWidget>( this, CampControlClass, FName("Camp Controls"));
 	}
 
-	Controls = CreateWidget<>( this, ControlsClass, FName("Controls"));
+	Controls->AddToViewport();
 
 }
