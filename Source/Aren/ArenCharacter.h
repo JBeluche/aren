@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Aren/Actors/CharacterBase.h"
 #include "ArenCharacter.generated.h"
 
 class ACampPawn;
 
 UCLASS(Blueprintable)
-class AArenCharacter : public ACharacter
+class AArenCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 

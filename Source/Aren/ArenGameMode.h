@@ -13,6 +13,12 @@ class AArenGameMode : public AGameModeBase
 
 public:
 	AArenGameMode();
+
+protected:
+	float TimeOfDay;
+	float DayCycleSpeed;
+
+	
 };
 
 
