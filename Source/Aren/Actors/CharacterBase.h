@@ -6,7 +6,18 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
-class ATriggerSphere;
+//Classes
+class USphereComponent;
+class UAttackComponent;
+class UHealthComponent;
+ 
+ //Enums
+ UENUM(BlueprintType)
+ enum class EFaction : uint8 
+ {
+      NOVARD UMETA(DisplayName = "Novard"),
+      EVIL UMETA(DisplayName = "Evil")
+ };
 
 UCLASS()
 class AREN_API ACharacterBase : public ACharacter
@@ -16,6 +27,9 @@ class AREN_API ACharacterBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ACharacterBase();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    EFaction CurrentFaction;
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,6 +44,13 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
-	ATriggerSphere* CombatSphere;	
+	USphereComponent* AttackRangeSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
+	UAttackComponent* AttackComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
+	UHealthComponent* HealthComponent;
+
 
 };
