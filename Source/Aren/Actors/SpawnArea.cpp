@@ -19,3 +19,8 @@ void ASpawnArea::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
+float ASpawnArea::GetSphereComponentRadius()
+{
+	return SpawnArea->GetScaledSphereRadius();
+}

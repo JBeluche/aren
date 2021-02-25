@@ -79,7 +79,11 @@ void UAttackComponent::RemoveEnnemiesInRange(UPrimitiveComponent *OverlappedComp
 		{
 			if (EnnemyToAttack == OtherActor)
 			{
-				RemoveEnnemyToAttack();
+				if(GetWorld()->GetTimerManager().IsTimerActive(AttackRateTimerHandle))
+				{
+					GetWorld()->GetTimerManager().ClearTimer(AttackRateTimerHandle);
+					RemoveEnnemyToAttack();
+				}
 			}
 			else
 			{
@@ -113,8 +117,8 @@ void UAttackComponent::RemoveFromWaitingList(AActor *ActortoRemove)
 
 void UAttackComponent::Attack()
 {
-
-	UE_LOG(LogTemp, Error, TEXT("Attacking %s"), *EnnemyToAttack->GetName());
-	
-	UGameplayStatics::ApplyDamage(EnnemyToAttack, Damage, Owner->GetInstigatorController(), Owner, DamageType);
+	if(EnnemyToAttack)
+	{
+		UGameplayStatics::ApplyDamage(EnnemyToAttack, Damage, Owner->GetInstigatorController(), Owner, DamageType);
+	}
 }

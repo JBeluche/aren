@@ -36,6 +36,8 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	AttackComponent->CheckAttackCondition();
 
+
+
 }
 
 // Called to bind functionality to input

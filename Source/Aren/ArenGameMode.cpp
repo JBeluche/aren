@@ -5,6 +5,11 @@
 #include "ArenCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
+#include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
+#include "Aren/Actors/SpawnArea.h"
+#include "Math/UnrealMathUtility.h"
+#include "Aren/Actors/CharacterBase.h"
 
 AArenGameMode::AArenGameMode()
 {
@@ -13,11 +18,11 @@ AArenGameMode::AArenGameMode()
 
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDownCPP/Blueprints/TopDownCharacter"));
+
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
-	
 }
 
 void AArenGameMode::BeginPlay()
@@ -28,26 +33,33 @@ void AArenGameMode::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AArenGameMode::MoveTime, 1.0f, true);
 
 	Super::BeginPlay();
-
+	EnnemieCount = 12;
+	bHasSpawnedTonight = false;
 }
 
 void AArenGameMode::SetTimeTo(int8 Hours, int8 Minutes)
 {
-/*	int TotalMinutes = (Hours * 60) + Minutes;
+	/*	int TotalMinutes = (Hours * 60) + Minutes;
 	SecondsPerDay
 	ElapsedSeconds = NewTime;*/
 }
 
 void AArenGameMode::MoveTime()
 {
-	if(ElapsedSeconds >= SecondsPerDay)
+	if (ElapsedSeconds >= SecondsPerDay)
 	{
 		ElapsedSeconds = 0.0f;
 	}
 	else
 	{
 		ElapsedSeconds = ElapsedSeconds + 1.0f;
-	}	
+	}
+
+	//To Remove Or Change
+	if (ElapsedSeconds >= 5 && bHasSpawnedTonight == false)
+	{
+		SpawnEnemies();
+	}
 
 	//Convert real seconds to world time
 	float PercentPerSecond = ElapsedSeconds * 24.0f / SecondsPerDay;
@@ -55,4 +67,65 @@ void AArenGameMode::MoveTime()
 	//Calculate time to show
 	GameMinutes = int32(MinutesToShow) % 60;
 	GameHours = int32(MinutesToShow) / 60;
+}
+void AArenGameMode::SpawnEnemies()
+{
+	for (int32 i = 0; i < EnnemieCount; i++)
+	{
+		FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
+		/*FActorSpawnParameters SpawnInfo;
+		static ConstructorHelpers::FindObject<ACharacterBase> BPCharacterBaseClass(TEXT("/Game/Blueprints/BP_CharacterBase'"));
+
+		GetWorld()->SpawnActor(CharactersToSpawn[0], GetRandomSpawnLocation(), Rotation);*/
+		UE_LOG(LogTemp, Error, TEXT("Should spawn someone "));
+
+
+
+		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_CharacterBase")));
+
+		UBlueprint *GeneratedBP = Cast<UBlueprint>(SpawnActor);
+		if (!SpawnActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("CANT FIND OBJECT TO SPAWN")));
+			return;
+		}
+
+		UClass *SpawnClass = SpawnActor->StaticClass();
+		if (SpawnClass == NULL)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("CLASS == NULL")));
+			return;
+		}
+
+		UWorld *World = GetWorld();
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		World->SpawnActor<AActor>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
+	}
+
+	bHasSpawnedTonight = true;
+}
+
+FVector AArenGameMode::GetRandomSpawnLocation()
+{
+	//Get all sphere circles
+	for (TActorIterator<ASpawnArea> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		SpawnAreaList.Push(*ActorItr);
+	}
+	//Select a random one between all of them
+	int32 RandomSpawnNumber = FMath::RandRange(0, (SpawnAreaList.Num() - 1));
+
+	UE_LOG(LogTemp, Error, TEXT("Selected array item is %s"), *SpawnAreaList[RandomSpawnNumber]->GetName());
+	//Select a random location in spawn
+	float Radius = SpawnAreaList[RandomSpawnNumber]->GetSphereComponentRadius();
+	FVector SpawnAreaActorLocation = SpawnAreaList[RandomSpawnNumber]->GetActorLocation();
+
+	FVector LocationToSpawn = FVector();
+	LocationToSpawn.X = FMath::FRandRange((SpawnAreaActorLocation.X + Radius), (SpawnAreaActorLocation.X - Radius));
+	LocationToSpawn.Y = FMath::FRandRange((SpawnAreaActorLocation.Y + Radius), (SpawnAreaActorLocation.Y - Radius));
+	LocationToSpawn.Z = SpawnAreaActorLocation.Z;
+
+	return LocationToSpawn;
 }

@@ -16,6 +16,9 @@ class AREN_API ASpawnArea : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ASpawnArea();
+	
+	float GetSphereComponentRadius();
+
 
 protected:
 	// Called when the game starts or when spawned

@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "ArenGameMode.generated.h"
 
+class ASpawnArea;
+class ACharacterBase;
+
 UCLASS(minimalapi)
 class AArenGameMode : public AGameModeBase
 {
@@ -20,17 +23,27 @@ protected:
 private:
 
 	//UPROPERTY
-	UPROPERTY(EditAnywhere, Category = Time, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Settings, meta = (AllowPrivateAccess = "true"))
 	int MinutesPerDay;
+
+	UPROPERTY(EditAnywhere, Category = Settings, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<ACharacterBase>> CharactersToSpawn;
 
 	//Variables
 	float SecondsPerDay = 0.0f;
 	float ElapsedSeconds = 0.0f;
+	int32 EnnemieCount;
 	int GameMinutes;
 	int GameHours;
 	FTimerHandle TimerHandle;
+	TArray<ASpawnArea*> SpawnAreaList;
+	bool bHasSpawnedTonight;
+
+	//Functions
 	void MoveTime();
 	void SetTimeTo(int8 Hours, int8 minutes);
+	FVector GetRandomSpawnLocation();
+	void SpawnEnemies();
 
 };
 
