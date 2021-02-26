@@ -31,7 +31,6 @@ void UHealthComponent::BeginPlay()
 void UHealthComponent::TakeDamage(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 
-	UE_LOG(LogTemp, Error, TEXT("Losing health %f"), Damage);
 	if(Damage == 0)
 	{
 		
@@ -43,7 +42,6 @@ void UHealthComponent::TakeDamage(AActor* DamageActor, float Damage, const UDama
 
 	if(Health <= 0)
 	{
-UE_LOG(LogTemp, Error, TEXT("I am dead"));
 
 		/*if(GameModeRef)
 		{

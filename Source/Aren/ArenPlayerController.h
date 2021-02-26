@@ -72,8 +72,11 @@ private:
 	//Varialbes Blueprint
 	ACampPawn* CampPawn;
 
-	//Functions
+	FVector2D PreviousTouchLocation;
+	FVector2D NewTouchLocation;
 
+	
+	//Functions
 
 };
 

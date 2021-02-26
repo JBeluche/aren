@@ -35,6 +35,8 @@ void AArenPlayerController::BeginPlay()
 	}
 	//Selcting Aren Character Pawn
 	ControlledCharater = Cast<AArenCharacter>(GetPawn());
+
+
 }
 
 void AArenPlayerController::PlayerTick(float DeltaTime)
@@ -46,6 +48,33 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
+
+	bool bIsFingerTouching;
+	GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
+	if(bIsFingerTouching)
+	{
+		AActor* MyOwner = Cast<AActor>(GetPawn());
+		if(MyOwner)
+		{
+			float NewRotation = PreviousTouchLocation.X - NewTouchLocation.X;
+
+			FRotator CurrentRotation = MyOwner->GetActorRotation();
+
+			if(PreviousTouchLocation.X == 0.0f)
+			{
+				NewRotation = 0.0f;
+			}
+
+			UE_LOG(LogTemp, Error, TEXT("Fuck New rotation: %f, PreviousTouchLocation: %f, newTouchLocation: %f"), NewRotation, PreviousTouchLocation.X, NewTouchLocation.X);
+		
+			MyOwner->SetActorRotation(FRotator(CurrentRotation.Pitch, (CurrentRotation.Yaw + NewRotation), CurrentRotation.Roll));
+		}
+		PreviousTouchLocation = NewTouchLocation;
+	}
+	else
+	{
+		PreviousTouchLocation.X = 0.0f;
+	}
 }
 
 void AArenPlayerController::SetupInputComponent()
@@ -54,6 +83,7 @@ void AArenPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AArenPlayerController::OnSetDestinationPressed);
+	
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AArenPlayerController::OnSetDestinationReleased);
 
 	// support touch devices 

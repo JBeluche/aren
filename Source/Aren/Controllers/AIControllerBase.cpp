@@ -14,13 +14,15 @@ AAIControllerBase::AAIControllerBase()
 void AAIControllerBase::BeginPlay()
 {
     ArenCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+
     
     Super::BeginPlay();
 }
 
 void AAIControllerBase::Tick(float DeltaTime)
 {
-    UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, ArenCharacter->GetActorLocation());
+    //UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, ArenCharacter->GetActorLocation());
 }
 
 

@@ -73,13 +73,6 @@ void AArenGameMode::SpawnEnemies()
 	for (int32 i = 0; i < EnnemieCount; i++)
 	{
 		FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-		/*FActorSpawnParameters SpawnInfo;
-		static ConstructorHelpers::FindObject<ACharacterBase> BPCharacterBaseClass(TEXT("/Game/Blueprints/BP_CharacterBase'"));
-
-		GetWorld()->SpawnActor(CharactersToSpawn[0], GetRandomSpawnLocation(), Rotation);*/
-		UE_LOG(LogTemp, Error, TEXT("Should spawn someone "));
-
-
 
 		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_CharacterBase")));
 
@@ -101,7 +94,8 @@ void AArenGameMode::SpawnEnemies()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		World->SpawnActor<AActor>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
+		ACharacterBase *CharacterBase = World->SpawnActor<ACharacterBase>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
+		CharacterBase->SpawnDefaultController();
 	}
 
 	bHasSpawnedTonight = true;
@@ -129,3 +123,4 @@ FVector AArenGameMode::GetRandomSpawnLocation()
 
 	return LocationToSpawn;
 }
+
