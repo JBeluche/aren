@@ -13,7 +13,6 @@ AAIControllerBase::AAIControllerBase()
 
 void AAIControllerBase::BeginPlay()
 {
-    ArenCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
 
     

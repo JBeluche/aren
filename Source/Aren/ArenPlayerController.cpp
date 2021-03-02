@@ -35,45 +35,86 @@ void AArenPlayerController::BeginPlay()
 	}
 	//Selcting Aren Character Pawn
 	ControlledCharater = Cast<AArenCharacter>(GetPawn());
+	CurrentPawnEnum = ECurrentPawn::ARENCHARACTER;
 
 
 }
 
 void AArenPlayerController::PlayerTick(float DeltaTime)
 {
+
 	Super::PlayerTick(DeltaTime);
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
+	if(CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
-		MoveToMouseCursor();
-	}
-
-	bool bIsFingerTouching;
-	GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
-	if(bIsFingerTouching)
-	{
-		AActor* MyOwner = Cast<AActor>(GetPawn());
-		if(MyOwner)
+		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
+		if(bIsFingerTouching)
 		{
-			float NewRotation = PreviousTouchLocation.X - NewTouchLocation.X;
-
-			FRotator CurrentRotation = MyOwner->GetActorRotation();
-
-			if(PreviousTouchLocation.X == 0.0f)
+			AActor* MyOwner = Cast<AActor>(GetPawn());
+			if(MyOwner)
 			{
-				NewRotation = 0.0f;
-			}
+				float NewRotation = PreviousTouchLocation.X - NewTouchLocation.X;
 
-			UE_LOG(LogTemp, Error, TEXT("Fuck New rotation: %f, PreviousTouchLocation: %f, newTouchLocation: %f"), NewRotation, PreviousTouchLocation.X, NewTouchLocation.X);
-		
-			MyOwner->SetActorRotation(FRotator(CurrentRotation.Pitch, (CurrentRotation.Yaw + NewRotation), CurrentRotation.Roll));
+				FRotator CurrentRotation = MyOwner->GetActorRotation();
+
+				if(PreviousTouchLocation.X == 0.0f)
+				{
+					NewRotation = 0.0f;
+				}
+
+				MyOwner->SetActorRotation(FRotator(CurrentRotation.Pitch, (CurrentRotation.Yaw + NewRotation), CurrentRotation.Roll));
+			}
+			PreviousTouchLocation = NewTouchLocation;
 		}
-		PreviousTouchLocation = NewTouchLocation;
+		else
+		{
+			PreviousTouchLocation.X = 0.0f;
+		}
 	}
-	else
+	else if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
-		PreviousTouchLocation.X = 0.0f;
+		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
+		if(bIsFingerTouching)
+		{
+			AActor* MyOwner = Cast<AActor>(GetPawn());
+			if(MyOwner)
+			{
+				FVector CurrentLocation = MyOwner->GetActorLocation();
+				float FloatToAddOnY = (PreviousTouchLocation.X - NewTouchLocation.X) * 5.0f;
+				float FloatToAddOnX  = (PreviousTouchLocation.Y - NewTouchLocation.Y) * 5.0f;
+
+				if(PreviousTouchLocation.X == 0.0f)
+				{
+					FloatToAddOnY  = 0.0f;
+				}
+				if(PreviousTouchLocation.Y == 0.0f)
+				{
+					FloatToAddOnX = 0.0f;
+				}
+				FVector NewLocation = MyOwner->GetActorLocation();
+				//Up and Down swipe is X
+				FloatToAddOnX = -1 * FloatToAddOnX;
+				NewLocation.X = CurrentLocation.X + FloatToAddOnX;
+				//Left and right swipe is Y
+				NewLocation.Y = CurrentLocation.Y + FloatToAddOnY;
+
+				MyOwner->SetActorLocation(NewLocation);
+				//Look at how much the difference was to make a sort of speed when the finger is released
+				PreviousTouchLocation = NewTouchLocation;
+
+				//bFingerReleased = true;
+			}
+		}
+		/*else if(bFingerReleased)
+		{
+			bFingerReleased = false;
+
+		}*/
+		else
+		{
+			PreviousTouchLocation.X = 0.0f;
+			PreviousTouchLocation.Y = 0.0f;
+		}
 	}
 }
 
@@ -82,91 +123,9 @@ void AArenPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AArenPlayerController::OnSetDestinationPressed);
-	
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AArenPlayerController::OnSetDestinationReleased);
-
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AArenPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AArenPlayerController::MoveToTouchLocation);
-
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &AArenPlayerController::OnResetVR);
-
 	Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
 	Controls->AddToViewport();
 
-}
-
-void AArenPlayerController::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AArenPlayerController::MoveToMouseCursor()
-{
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
-	{
-		if (ControlledCharater)
-		{
-			if (ControlledCharater->GetCursorToWorld())
-			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, ControlledCharater->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
-	}
-	else
-	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
-	}
-}
-
-void AArenPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	FVector2D ScreenSpaceLocation(Location);
-
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
-	{
-		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
-	}
-}
-
-void AArenPlayerController::SetNewMoveDestination(const FVector DestLocation)
-{
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn)
-	{
-		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		}
-	}
-}
-
-void AArenPlayerController::OnSetDestinationPressed()
-{
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
-}
-
-void AArenPlayerController::OnSetDestinationReleased()
-{
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
 }
 
 void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)

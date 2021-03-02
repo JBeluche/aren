@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Aren/Actors/SpawnArea.h"
 #include "Math/UnrealMathUtility.h"
-#include "Aren/Actors/CharacterBase.h"
+#include "Aren/Pawns/MainPlayerPawn.h"
 
 AArenGameMode::AArenGameMode()
 {
@@ -74,7 +74,7 @@ void AArenGameMode::SpawnEnemies()
 	{
 		FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
-		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_CharacterBase")));
+		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_MainPlayerPawn")));
 
 		UBlueprint *GeneratedBP = Cast<UBlueprint>(SpawnActor);
 		if (!SpawnActor)
@@ -94,7 +94,7 @@ void AArenGameMode::SpawnEnemies()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		ACharacterBase *CharacterBase = World->SpawnActor<ACharacterBase>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
+		AMainPlayerPawn *CharacterBase = World->SpawnActor<AMainPlayerPawn>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
 		CharacterBase->SpawnDefaultController();
 	}
 

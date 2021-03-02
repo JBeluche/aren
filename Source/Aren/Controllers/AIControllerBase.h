@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "AIControllerBase.generated.h"
 
-class ACharacter;
 
 UCLASS()
 class AREN_API AAIControllerBase : public AAIController
@@ -22,7 +21,6 @@ public:
 private:
 	virtual void BeginPlay() override;
 
-	ACharacter* ArenCharacter;
 
 	//Attack player
 	//Health component
