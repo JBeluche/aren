@@ -8,7 +8,7 @@
 #include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
 #include "Aren/Pawns/CampPawn.h"
-#include "Aren/Pawns/CampPawn.h"
+#include "Aren/Pawns/MainPlayerPawn.h"
 #include "EngineUtils.h"
 
 AArenPlayerController::AArenPlayerController()
@@ -23,6 +23,7 @@ AArenPlayerController::AArenPlayerController()
 	CampControlClass = WBPControlsCamp.Class;
 
 	CampPawn = nullptr;
+	MainPlayerPawn = nullptr;
 	
 }
 
@@ -33,10 +34,13 @@ void AArenPlayerController::BeginPlay()
 	{
 		CampPawn = *ActorItr;
 	}
-	//Selcting Aren Character Pawn
-	ControlledCharater = Cast<AArenCharacter>(GetPawn());
-	CurrentPawnEnum = ECurrentPawn::ARENCHARACTER;
+	for (TActorIterator<AMainPlayerPawn> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		MainPlayerPawn = *ActorItr;
+	}
 
+	CurrentPawnEnum = ECurrentPawn::ARENCHARACTER;
+	SetOwner();
 
 }
 
@@ -50,7 +54,6 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
 		if(bIsFingerTouching)
 		{
-			AActor* MyOwner = Cast<AActor>(GetPawn());
 			if(MyOwner)
 			{
 				float NewRotation = PreviousTouchLocation.X - NewTouchLocation.X;
@@ -73,10 +76,10 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 	}
 	else if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
+	
 		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
 		if(bIsFingerTouching)
 		{
-			AActor* MyOwner = Cast<AActor>(GetPawn());
 			if(MyOwner)
 			{
 				FVector CurrentLocation = MyOwner->GetActorLocation();
@@ -105,11 +108,6 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 				//bFingerReleased = true;
 			}
 		}
-		/*else if(bFingerReleased)
-		{
-			bFingerReleased = false;
-
-		}*/
 		else
 		{
 			PreviousTouchLocation.X = 0.0f;
@@ -136,16 +134,26 @@ void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 	
 	if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
-		Possess(ControlledCharater);
+		Possess(MainPlayerPawn);
+		SetOwner();
+		//Get the player charater on the map and focus camera
 		Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
 	}
 	else if(CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
-		
 		Possess(CampPawn);
+		SetOwner();
 		Controls = CreateWidget<UUserWidget>( this, CampControlClass, FName("Camp Controls"));
 	}
 
 	Controls->AddToViewport();
 
+}
+
+void AArenPlayerController::SetOwner()
+{	
+	MyOwner = Cast<AActor>(GetPawn());
+		UE_LOG(LogTemp, Error, TEXT(
+			"Am I Here?"
+		));
 }

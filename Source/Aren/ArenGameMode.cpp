@@ -109,18 +109,25 @@ FVector AArenGameMode::GetRandomSpawnLocation()
 		SpawnAreaList.Push(*ActorItr);
 	}
 	//Select a random one between all of them
-	int32 RandomSpawnNumber = FMath::RandRange(0, (SpawnAreaList.Num() - 1));
+	if(SpawnAreaList.Num() == 0)
+	{
+		int32 RandomSpawnNumber = FMath::RandRange(0, (SpawnAreaList.Num() - 1));
 
-	UE_LOG(LogTemp, Error, TEXT("Selected array item is %s"), *SpawnAreaList[RandomSpawnNumber]->GetName());
-	//Select a random location in spawn
-	float Radius = SpawnAreaList[RandomSpawnNumber]->GetSphereComponentRadius();
-	FVector SpawnAreaActorLocation = SpawnAreaList[RandomSpawnNumber]->GetActorLocation();
+		UE_LOG(LogTemp, Error, TEXT("Selected array item is %s"), *SpawnAreaList[RandomSpawnNumber]->GetName());
+		//Select a random location in spawn
+		float Radius = SpawnAreaList[RandomSpawnNumber]->GetSphereComponentRadius();
+		FVector SpawnAreaActorLocation = SpawnAreaList[RandomSpawnNumber]->GetActorLocation();
 
+		
 	FVector LocationToSpawn = FVector();
 	LocationToSpawn.X = FMath::FRandRange((SpawnAreaActorLocation.X + Radius), (SpawnAreaActorLocation.X - Radius));
 	LocationToSpawn.Y = FMath::FRandRange((SpawnAreaActorLocation.Y + Radius), (SpawnAreaActorLocation.Y - Radius));
 	LocationToSpawn.Z = SpawnAreaActorLocation.Z;
 
 	return LocationToSpawn;
+
+	}
+
+	return FVector(0.0f, 0.0f, 0.0f);
 }
 

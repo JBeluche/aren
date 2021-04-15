@@ -10,6 +10,7 @@
 class UUserWidget;
 class AArenCharacter;
 class ACampPawn;
+class AMainPlayerPawn;
 
 
 //Enums 
@@ -49,11 +50,13 @@ private:
 	TSubclassOf<class UUserWidget> CharacterControlClass;
 	TSubclassOf<class UUserWidget> CampControlClass;
 	UUserWidget* Controls;
+	AActor* MyOwner;
 	
 	AArenCharacter* ControlledCharater;
 
 	//Varialbes Blueprint
 	ACampPawn* CampPawn;
+	AMainPlayerPawn* MainPlayerPawn;
 
 	FVector2D PreviousTouchLocation;
 	FVector2D NewTouchLocation;
@@ -63,5 +66,6 @@ private:
 
 	
 	//Functions
+	void SetOwner();
 
 };

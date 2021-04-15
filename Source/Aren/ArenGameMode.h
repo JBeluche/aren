@@ -37,7 +37,8 @@ private:
 	int GameHours;
 	FTimerHandle TimerHandle;
 	TArray<ASpawnArea*> SpawnAreaList;
-	bool bHasSpawnedTonight;
+	bool bHasSpawnedTonight; 
+	
 
 	//Functions
 	void MoveTime();
