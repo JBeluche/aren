@@ -92,4 +92,5 @@ public:
     */
     UFUNCTION(BlueprintCallable, Category = "Mesh Merge", meta = (UnsafeDuringActorConstruction = "true"))
         static class USkeletalMesh* MergeMeshes(const FSkeletalMeshMergeParams& Params);
+
 };

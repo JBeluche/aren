@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Aren/Components/AttackComponent.h"
 #include "Aren/Components/HealthComponent.h"
+#include "Aren/Components/CharacterCustomizationComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -15,8 +16,16 @@ ACharacterBase::ACharacterBase()
 	AttackRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Range"));
 	AttackComponent = CreateDefaultSubobject<UAttackComponent>(TEXT("Attack Component"));
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	CharacterCustomizationComponent = CreateDefaultSubobject<UCharacterCustomizationComponent>(TEXT("Character Customization Component"));
+
+	Mask = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mask"));
+	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 
 	AttackRangeSphere->SetupAttachment(RootComponent);
+
+	Mask->SetupAttachment(RootComponent);
+	SkeletalMesh->SetupAttachment(Mask);
+
 
 }
 
@@ -46,6 +55,13 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+void ACharacterBase::SetSkeletalMesh(USkeletalMesh* GeneratedSkeletalMesh)
+{
+	SkeletalMesh->SetSkeletalMesh(GeneratedSkeletalMesh, true);
+}
+/*
+void ACharacterBase::GenerateMaterial(UMaterialInstanceDynamic)*/
 
 
 

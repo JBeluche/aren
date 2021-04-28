@@ -10,6 +10,7 @@
 class USphereComponent;
 class UAttackComponent;
 class UHealthComponent;
+class UCharacterCustomizationComponent;
  
  //Enums
  UENUM(BlueprintType)
@@ -42,6 +43,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetSkeletalMesh(USkeletalMesh* GeneratedSkeletalMesh);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* AttackRangeSphere;
@@ -51,6 +54,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
+	UCharacterCustomizationComponent* CharacterCustomizationComponent;
+//Skeletal meshes
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* Mask;
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* SkeletalMesh;
 
 
 };

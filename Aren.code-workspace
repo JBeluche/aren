@@ -42,7 +42,9 @@
 			"random": "cpp",
 			"ratio": "cpp",
 			"tuple": "cpp",
-			"vector": "cpp"
+			"vector": "cpp",
+			"initializer_list": "cpp",
+			"new": "cpp"
 		}
 	},
 	"extensions": {

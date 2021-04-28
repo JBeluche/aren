@@ -15,14 +15,6 @@ AArenGameMode::AArenGameMode()
 {
 	// use our custom PlayerController class
 	PlayerControllerClass = AArenPlayerController::StaticClass();
-
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDownCPP/Blueprints/TopDownCharacter"));
-
-	if (PlayerPawnBPClass.Class != nullptr)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
 }
 
 void AArenGameMode::BeginPlay()
