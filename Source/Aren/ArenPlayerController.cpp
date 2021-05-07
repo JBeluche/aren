@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "ArenCharacter.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
 #include "Aren/Pawns/CampPawn.h"
@@ -43,6 +44,7 @@ void AArenPlayerController::BeginPlay()
 	SetOwner();
 	FingerTouchDuration = 0.0f;
 	LastFingerTouchDuration = 0.0f;
+	
 }
 
 void AArenPlayerController::PlayerTick(float DeltaTime)
@@ -84,12 +86,11 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 
 			FingerTouchDuration = (FingerTouchDuration + 1.0f);
 
-				GetHitResultUnderFinger(
-					ETouchIndex::Touch1,
-					ECC_Pawn,
-					true,
-					LastTouchHitResults);
-
+			GetHitResultUnderFinger(
+				ETouchIndex::Touch1,
+				ECC_Pawn,
+				true,
+				LastTouchHitResults);
 
 			//If this is the case, do a cast?
 			if (MyOwner)
@@ -116,8 +117,6 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 				MyOwner->SetActorLocation(NewLocation);
 				//Look at how much the difference was to make a sort of speed when the finger is released
 				PreviousTouchLocation = NewTouchLocation;
-
-
 			}
 		}
 		else
@@ -127,11 +126,15 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 
 			if (LastFingerTouchDuration < 50.0f && LastFingerTouchDuration > 2.0f)
 			{
-				if (Cast<ACharacterBase>(LastTouchHitResults.Actor))
+				if (SelectedCharacter != NULL)
+				{
+					UAIBlueprintHelperLibrary::SimpleMoveToLocation(SelectedCharacter->GetController(), LastTouchHitResults.Location);
+				}
+				else if (Cast<ACharacterBase>(LastTouchHitResults.Actor))
 				{
 					SelectedCharacter = Cast<ACharacterBase>(LastTouchHitResults.Actor);
 
-					if(SelectedCharacter->SetToSelectedPlayer())
+					if (SelectedCharacter->SetToSelectedPlayer())
 					{
 						UE_LOG(LogTemp, Display, TEXT("Actor was selected"));
 					}

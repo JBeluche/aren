@@ -6,6 +6,7 @@
 #include "Aren/Components/HealthComponent.h"
 #include "Aren/Components/CharacterCustomizationComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
