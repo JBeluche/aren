@@ -11,6 +11,7 @@ class UUserWidget;
 class AArenCharacter;
 class ACampPawn;
 class AMainPlayerPawn;
+class ACharacterBase;
 
 
 //Enums 
@@ -57,12 +58,16 @@ private:
 	//Varialbes Blueprint
 	ACampPawn* CampPawn;
 	AMainPlayerPawn* MainPlayerPawn;
+	ACharacterBase* SelectedCharacter;
+
 
 	FVector2D PreviousTouchLocation;
 	FVector2D NewTouchLocation;
 	bool bFingerReleased;
 	bool bIsFingerTouching;
-
+	float FingerTouchDuration;
+	float LastFingerTouchDuration;
+	FHitResult LastTouchHitResults;
 
 	
 	//Functions

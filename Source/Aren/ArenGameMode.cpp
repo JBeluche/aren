@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Aren/Actors/SpawnArea.h"
 #include "Math/UnrealMathUtility.h"
-#include "Aren/Pawns/MainPlayerPawn.h"
+#include "Aren/Actors/CharacterBase.h"
 
 AArenGameMode::AArenGameMode()
 {
@@ -50,7 +50,7 @@ void AArenGameMode::MoveTime()
 	//To Remove Or Change
 	if (ElapsedSeconds >= 5 && bHasSpawnedTonight == false)
 	{
-		SpawnEnemies();
+		//SpawnEnemies();
 	}
 
 	//Convert real seconds to world time
@@ -66,7 +66,7 @@ void AArenGameMode::SpawnEnemies()
 	{
 		FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
-		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_MainPlayerPawn")));
+		UObject *SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), NULL, TEXT("/Game/Blueprints/BP_CharacterBase")));
 
 		UBlueprint *GeneratedBP = Cast<UBlueprint>(SpawnActor);
 		if (!SpawnActor)
@@ -86,7 +86,7 @@ void AArenGameMode::SpawnEnemies()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AMainPlayerPawn *CharacterBase = World->SpawnActor<AMainPlayerPawn>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
+		ACharacterBase *CharacterBase = World->SpawnActor<ACharacterBase>(GeneratedBP->GeneratedClass, GetRandomSpawnLocation(), Rotation, SpawnParams);
 		CharacterBase->SpawnDefaultController();
 	}
 

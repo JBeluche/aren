@@ -18,13 +18,13 @@ AArenPlayerController::AArenPlayerController()
 
 	ConstructorHelpers::FClassFinder<UUserWidget> WBPControlsCharacter(TEXT("/Game/Blueprints/Widgets/WBP_ControlsPlayer"));
 	ConstructorHelpers::FClassFinder<UUserWidget> WBPControlsCamp(TEXT("/Game/Blueprints/Widgets/WBP_ControlsCamp"));
-	
+
 	CharacterControlClass = WBPControlsCharacter.Class;
 	CampControlClass = WBPControlsCamp.Class;
 
 	CampPawn = nullptr;
 	MainPlayerPawn = nullptr;
-	
+	SelectedCharacter = nullptr;
 }
 
 void AArenPlayerController::BeginPlay()
@@ -41,7 +41,8 @@ void AArenPlayerController::BeginPlay()
 
 	CurrentPawnEnum = ECurrentPawn::ARENCHARACTER;
 	SetOwner();
-
+	FingerTouchDuration = 0.0f;
+	LastFingerTouchDuration = 0.0f;
 }
 
 void AArenPlayerController::PlayerTick(float DeltaTime)
@@ -49,18 +50,18 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 
 	Super::PlayerTick(DeltaTime);
 
-	if(CurrentPawnEnum == ECurrentPawn::CAMP)
+	if (CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
-		if(bIsFingerTouching)
+		if (bIsFingerTouching)
 		{
-			if(MyOwner)
+			if (MyOwner)
 			{
 				float NewRotation = PreviousTouchLocation.X - NewTouchLocation.X;
 
 				FRotator CurrentRotation = MyOwner->GetActorRotation();
 
-				if(PreviousTouchLocation.X == 0.0f)
+				if (PreviousTouchLocation.X == 0.0f)
 				{
 					NewRotation = 0.0f;
 				}
@@ -74,23 +75,34 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 			PreviousTouchLocation.X = 0.0f;
 		}
 	}
-	else if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
+	else if (CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
-	
+
 		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
-		if(bIsFingerTouching)
+		if (bIsFingerTouching)
 		{
-			if(MyOwner)
+
+			FingerTouchDuration = (FingerTouchDuration + 1.0f);
+
+				GetHitResultUnderFinger(
+					ETouchIndex::Touch1,
+					ECC_Pawn,
+					true,
+					LastTouchHitResults);
+
+
+			//If this is the case, do a cast?
+			if (MyOwner)
 			{
 				FVector CurrentLocation = MyOwner->GetActorLocation();
 				float FloatToAddOnY = (PreviousTouchLocation.X - NewTouchLocation.X) * 5.0f;
-				float FloatToAddOnX  = (PreviousTouchLocation.Y - NewTouchLocation.Y) * 5.0f;
+				float FloatToAddOnX = (PreviousTouchLocation.Y - NewTouchLocation.Y) * 5.0f;
 
-				if(PreviousTouchLocation.X == 0.0f)
+				if (PreviousTouchLocation.X == 0.0f)
 				{
-					FloatToAddOnY  = 0.0f;
+					FloatToAddOnY = 0.0f;
 				}
-				if(PreviousTouchLocation.Y == 0.0f)
+				if (PreviousTouchLocation.Y == 0.0f)
 				{
 					FloatToAddOnX = 0.0f;
 				}
@@ -105,11 +117,31 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 				//Look at how much the difference was to make a sort of speed when the finger is released
 				PreviousTouchLocation = NewTouchLocation;
 
-				//bFingerReleased = true;
+
 			}
 		}
 		else
 		{
+			LastFingerTouchDuration = FingerTouchDuration;
+			FingerTouchDuration = 0.0f;
+
+			if (LastFingerTouchDuration < 50.0f && LastFingerTouchDuration > 2.0f)
+			{
+				if (Cast<ACharacterBase>(LastTouchHitResults.Actor))
+				{
+					SelectedCharacter = Cast<ACharacterBase>(LastTouchHitResults.Actor);
+
+					if(SelectedCharacter->SetToSelectedPlayer())
+					{
+						UE_LOG(LogTemp, Display, TEXT("Actor was selected"));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Display, TEXT("Actor cannot be selected"));
+					}
+				}
+			}
+
 			PreviousTouchLocation.X = 0.0f;
 			PreviousTouchLocation.Y = 0.0f;
 		}
@@ -121,9 +153,8 @@ void AArenPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
+	Controls = CreateWidget<UUserWidget>(this, CharacterControlClass, FName("Character Controls"));
 	Controls->AddToViewport();
-
 }
 
 void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
@@ -131,29 +162,26 @@ void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 	CurrentPawnEnum = NewPawn;
 	Controls->RemoveFromViewport();
 	UnPossess();
-	
-	if(CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
+
+	if (CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
 	{
 		Possess(MainPlayerPawn);
 		SetOwner();
 		//Get the player charater on the map and focus camera
-		Controls = CreateWidget<UUserWidget>( this, CharacterControlClass, FName("Character Controls"));
+		Controls = CreateWidget<UUserWidget>(this, CharacterControlClass, FName("Character Controls"));
 	}
-	else if(CurrentPawnEnum == ECurrentPawn::CAMP)
+	else if (CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		Possess(CampPawn);
 		SetOwner();
-		Controls = CreateWidget<UUserWidget>( this, CampControlClass, FName("Camp Controls"));
+		Controls = CreateWidget<UUserWidget>(this, CampControlClass, FName("Camp Controls"));
 	}
 
 	Controls->AddToViewport();
-
 }
 
 void AArenPlayerController::SetOwner()
-{	
+{
 	MyOwner = Cast<AActor>(GetPawn());
-		UE_LOG(LogTemp, Error, TEXT(
-			"Am I Here?"
-		));
+	UE_LOG(LogTemp, Error, TEXT("Am I Here?"));
 }

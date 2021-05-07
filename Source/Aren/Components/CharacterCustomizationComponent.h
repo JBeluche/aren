@@ -6,10 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "CharacterCustomizationComponent.generated.h"
 
+
+
 USTRUCT(BlueprintType)
-struct AREN_API FModularCharacterColorParams
+struct AREN_API FStructColorParams
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 	//Color Values for the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin Colors")
@@ -47,9 +49,9 @@ struct AREN_API FModularCharacterColorParams
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skin Colors")
 	TArray <FLinearColor> ScarColorArray;
-
-
 };
+
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class AREN_API UCharacterCustomizationComponent : public UActorComponent

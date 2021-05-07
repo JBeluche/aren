@@ -31,6 +31,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetPositionRelativeToLandscape();
+
+
 private:
 	UBoxComponent* BoxComponent;
 
@@ -40,10 +43,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float CameraHeight;
+	
+
 	void MoveAround();
 
-	
 	FVector2D PreviousTouchLocation;
 	FVector2D NewTouchLocation;
+
+	void CheckForLandscape();
 
 };
