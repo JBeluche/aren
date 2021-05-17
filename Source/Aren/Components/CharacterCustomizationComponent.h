@@ -133,6 +133,9 @@ public:
 	USkeletalMesh* HeadCoveringsBaseHair;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attachments")
+	USkeletalMesh* HeadCoveringsNoHair;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attachments")
 	USkeletalMesh* HeadCoveringsNoFacialHair;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attachments")

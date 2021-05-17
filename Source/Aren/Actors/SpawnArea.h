@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Aren/Actors/CharacterBase.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SpawnArea.generated.h"
@@ -27,4 +29,12 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* SpawnArea;
+
+	//Which faction can spawn	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Spawn parameters", meta = (AllowPrivateAccess = "true"))
+	TArray<EFaction> AllowedFactionToSpawn;
+
+	//If a boat can spawn
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Spawn parameters", meta = (AllowPrivateAccess = "true"))
+	bool bCanSpawnBoat;
 };

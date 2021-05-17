@@ -67,6 +67,7 @@ TArray<USkeletalMesh*> UCharacterCustomizationComponent::GetAllMeshesToMerge()
 	if(ChestAttachment) {MeshesToMerge.Add(ChestAttachment);}
 	if(HeadCoveringsBaseHair) {MeshesToMerge.Add(HeadCoveringsBaseHair);}
 	if(HeadCoveringsNoFacialHair) {MeshesToMerge.Add(HeadCoveringsNoFacialHair);}
+	if(HeadCoveringsNoHair) {MeshesToMerge.Add(HeadCoveringsNoHair);}
 
 	if(BackAttachment) {MeshesToMerge.Add(BackAttachment);}
 	if(ShoulderAttachmentRight) {MeshesToMerge.Add(ShoulderAttachmentRight);}

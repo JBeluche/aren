@@ -20,7 +20,7 @@ class UCharacterCustomizationComponent;
  enum class EFaction : uint8 
  {
       NOVARD UMETA(DisplayName = "Novard"),
-      EVIL UMETA(DisplayName = "Evil")
+      RAIDER UMETA(DisplayName = "Raider")
  };
 
 UCLASS()

@@ -21,7 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
 	//UPROPERTY
 	UPROPERTY(EditAnywhere, Category = Settings, meta = (AllowPrivateAccess = "true"))
 	int MinutesPerDay;

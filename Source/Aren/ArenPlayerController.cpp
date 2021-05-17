@@ -140,6 +140,7 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 					}
 					else
 					{
+						SelectedCharacter = nullptr;
 						UE_LOG(LogTemp, Display, TEXT("Actor cannot be selected"));
 					}
 				}

@@ -8,7 +8,7 @@ public class Aren : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Landscape", "Engine", "InputCore", "HeadMountedDisplay", "NavigationSystem", "AIModule", "UMG" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Landscape", "Engine", "InputCore", "HeadMountedDisplay", "GameplayTasks", "NavigationSystem", "AIModule", "UMG" });
 
 		
     }

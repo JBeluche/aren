@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "AIControllerBase.generated.h"
 
+class ACharacterBase;
 
 UCLASS()
 class AREN_API AAIControllerBase : public AAIController
@@ -21,11 +22,11 @@ public:
 private:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	UBehaviorTree* AIBehaviorTree;
 
-	//Attack player
-	//Health component
 
-	//Attack zone. Where someone can hit you and you can be hit
+	ACharacterBase* GetClosestEnnemy();
+	ACharacterBase* PendingTarget;
 
-	
 };

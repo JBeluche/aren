@@ -25,12 +25,11 @@ void ACampPawn::BeginPlay()
 	
 }
 
-
-
 // Called to bind functionality to input
 void ACampPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	
 
 }
 
