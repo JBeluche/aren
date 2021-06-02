@@ -4,7 +4,8 @@
 #include "Aren/Actors/CharacterBase.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Aren/Controllers/AIControllerBase.h"
+#include "Math/Vector.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -13,59 +14,25 @@ UAttackComponent::UAttackComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	AttackSpeed = 1.0f;
-
+	AttackSpeed = 1.5f;
+	AttackingRange = 20.0f;
 }
 
 void UAttackComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	Owner = Cast<ACharacterBase>(GetOwner());
 }
 
-void UAttackComponent::CheckAttackCondition()
-{
-	//Check if you are not shooting at someone.
-	if (!EnnemyToAttack)
-	{
-		for (int i = 0; i < EnemyWaitingList.Num(); i++)
-		{
-			//Then check if someone is in waiting list.
-			if (Cast<AActor>(EnemyWaitingList[i]))
-			{
-				//Shoot first one in waiting list
-				SetEnnemyToAttack(EnemyWaitingList[i]);
-			}
-		}
-	}
-	else if (EnnemyToAttack)
-	{
-		if (GetWorld()->GetTimerManager().IsTimerActive(AttackRateTimerHandle))
-		{
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer(AttackRateTimerHandle, this, &UAttackComponent::Attack, AttackSpeed, true);
-		}
-	}
-}
-
-void UAttackComponent::SetEnnemiesInRange(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+void UAttackComponent::SetEnnemiesInRange(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	if (Cast<ACharacterBase>(OtherActor))
 	{
-		ACharacterBase* OverlappingActor = Cast<ACharacterBase>(OtherActor);
-		if(OverlappingActor != Owner && OverlappingActor->CurrentFaction != Owner->CurrentFaction)
+		ACharacterBase *OverlappingActor = Cast<ACharacterBase>(OtherActor);
+		if (OverlappingActor != Owner && OverlappingActor->CurrentFaction != Owner->CurrentFaction)
 		{
-		if (!EnnemyToAttack)
-		{
-			SetEnnemyToAttack(OtherActor);
-		}
-		else
-		{
-			EnemyWaitingList.Add(OtherActor);
-		}
+			DetectedEnemies.Add(OtherActor);
 		}
 	}
 }
@@ -74,51 +41,90 @@ void UAttackComponent::RemoveEnnemiesInRange(UPrimitiveComponent *OverlappedComp
 {
 	if (Cast<ACharacterBase>(OtherActor))
 	{
-		ACharacterBase* OverlappingActor = Cast<ACharacterBase>(OtherActor);
-		if(OverlappingActor != Owner && OverlappingActor->CurrentFaction != Owner->CurrentFaction)
+		ACharacterBase *OverlappingActor = Cast<ACharacterBase>(OtherActor);
+		if (OverlappingActor != Owner && OverlappingActor->CurrentFaction != Owner->CurrentFaction)
 		{
-			if (EnnemyToAttack == OtherActor)
+			for (int i = 0; i < DetectedEnemies.Num(); i++)
 			{
-				if(GetWorld()->GetTimerManager().IsTimerActive(AttackRateTimerHandle))
+				if (OverlappingActor == Cast<AActor>(DetectedEnemies[i]))
 				{
-					GetWorld()->GetTimerManager().ClearTimer(AttackRateTimerHandle);
-					RemoveEnnemyToAttack();
+					DetectedEnemies.Remove(OverlappingActor);
 				}
-			}
-			else
-			{
-				RemoveFromWaitingList(OtherActor);
 			}
 		}
 	}
 }
 
-void UAttackComponent::SetEnnemyToAttack(AActor *NewEnnemyToAttack)
+void UAttackComponent::CheckAttackCondition()
 {
-	EnnemyToAttack = NewEnnemyToAttack;
-	RemoveFromWaitingList(NewEnnemyToAttack);
-}
-
-void UAttackComponent::RemoveEnnemyToAttack()
-{
-	EnnemyToAttack = nullptr;
-}
-
-void UAttackComponent::RemoveFromWaitingList(AActor *ActortoRemove)
-{
-	for (int i = 0; i < EnemyWaitingList.Num(); i++)
+	if (!CharacterBusy)
 	{
-		if (ActortoRemove == Cast<AActor>(EnemyWaitingList[i]))
+		NearestEnemy = Cast<ACharacterBase>(GetClosestEnnemyInRange());
+
+		if (NearestEnemy)
 		{
-			EnemyWaitingList.Remove(ActortoRemove);
+			Cast<AAIControllerBase>(Owner->GetController())->SetEnnemyToChase(NearestEnemy);
+			const float NearestEnemyDistance = FVector::Dist(NearestEnemy->GetActorLocation(), Owner->GetActorLocation());
+
+			if (NearestEnemyDistance <= AttackingRange)
+			{
+				if (GetWorld()->GetTimerManager().IsTimerActive(AttackRateTimerHandle))
+				{
+					Cast<AAIControllerBase>(Owner->GetController())->SetCharacterIsBusy(true);
+				}
+				else
+				{
+					GetWorld()->GetTimerManager().SetTimer(AttackRateTimerHandle, this, &UAttackComponent::Attack, AttackSpeed, true);
+				}
+			}
 		}
 	}
 }
 
 void UAttackComponent::Attack()
 {
-	if(EnnemyToAttack)
+	if (NearestEnemy)
 	{
-		UGameplayStatics::ApplyDamage(EnnemyToAttack, Damage, Owner->GetInstigatorController(), Owner, DamageType);
+		//TODO Make the character rotate towards the enemy he attacks
+		if(AttackMontage != nullptr){	
+			Owner->PlayAnimationMontage(AttackMontage, false);}
+			else{
+				UE_LOG(LogTemp, Error, TEXT("no montage"));
+
+			}
+
+		UGameplayStatics::ApplyDamage(NearestEnemy, Damage, Owner->GetInstigatorController(), Owner, DamageType);
 	}
+
 }
+
+ACharacterBase *UAttackComponent::GetClosestEnnemyInRange()
+{
+	float NearestDistance = BIG_NUMBER;
+
+	ACharacterBase *NearestPawn = nullptr;
+
+	for (int i = 0; i < DetectedEnemies.Num(); i++)
+	{
+
+		if (DetectedEnemies[i] != NULL)
+		{
+			ACharacterBase *OtherPawn = Cast<ACharacterBase>(DetectedEnemies[i]);
+
+			if (OtherPawn != nullptr && OtherPawn != Owner && OtherPawn->CurrentFaction != Owner->CurrentFaction)
+			{
+				FVector MyLocation = Owner->GetActorLocation();
+				FVector OtherPawnLocation = OtherPawn->GetActorLocation();
+				const float TempDistance = FVector::Dist(MyLocation, OtherPawnLocation);
+				if (NearestDistance > TempDistance)
+				{
+					NearestDistance = TempDistance;
+					NearestPawn = OtherPawn;
+				}
+			}
+		}
+	}
+
+	return NearestPawn;
+}
+

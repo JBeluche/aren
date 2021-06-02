@@ -28,7 +28,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DefaultHealth = 100.0f;
 
-	float Health = 0.0f;
+	UPROPERTY(EditAnywhere)
+	float CurrentHealth;
 
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack Settings", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage*  DyingAnimation;
 };

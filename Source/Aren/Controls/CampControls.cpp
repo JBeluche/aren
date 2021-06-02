@@ -13,6 +13,9 @@ bool UCampControls::Initialize()
 	if (!ensure(CharacterView != nullptr)) return false;
     CharacterView->OnClicked.AddDynamic(this, &UCampControls::SwitchToCharacter);
 
+	if (!ensure(B_Build != nullptr)) return false;
+    B_Build->OnClicked.AddDynamic(this, &UCampControls::OpenBuildMenu);
+
     PlayerController = Cast<AArenPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
     return true;
@@ -21,5 +24,11 @@ bool UCampControls::Initialize()
 void UCampControls::SwitchToCharacter()
 {
     PlayerController->SwitchPawn(PlayerController->ECurrentPawn::ARENCHARACTER);
+}
+
+void UCampControls::OpenBuildMenu()
+{
+    //Foreach building on the map
+        //Add a button
 
 }

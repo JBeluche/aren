@@ -7,6 +7,7 @@
 #include "Aren/Components/CharacterCustomizationComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/EngineTypes.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -21,6 +22,9 @@ ACharacterBase::ACharacterBase()
 
 	Mask = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mask"));
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
 
 	AttackRangeSphere->SetupAttachment(RootComponent);
 
@@ -78,4 +82,35 @@ bool ACharacterBase::SetToSelectedPlayer()
 	}
 	
 	return false;
+}
+
+UBehaviorTree* ACharacterBase::GetBehaviorTree()
+{
+	return AIBehaviorTree;
+}
+
+void ACharacterBase::PlayAnimationMontage(UAnimMontage* MontageToPlay, bool bIsLooping)
+{
+
+	//GetMesh()->PlayAnimation(Anim, bLoop);
+	int test {5 + 5};
+		UE_LOG(LogTemp, Error, TEXT("%i"), test);
+
+	SkeletalMesh->GetAnimInstance()->Montage_Play(MontageToPlay, 1, EMontagePlayReturnType::MontageLength);
+
+	/*float PlayRate = 1.0f;
+	float StartingPosition = 0.0f;
+	const float MontageLength = SkeletalMesh->GetAnimInstance()->Montage_Play(MontageToPlay, PlayRate, EMontagePlayReturnType::MontageLength, StartingPosition);
+
+	if(MontageLength > 0.0f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Montage ended"));
+	}*/
+	//	MontageToPlay->MontagePlay(MontageToPlay, 1, NAME_None);
+	
+	/*float AnimationLength = SkeletalMesh->GetSingleNodeInstance()->GetLength();
+	
+	animLen -= 0.34f;
+
+	GetWorldTimerManager().SetTimer(PostAnimTimerHandle, this, &MyActor::PostAnimFunc, animLen, false);*/
 }

@@ -24,6 +24,7 @@ public:
 	
 	UFUNCTION()
 	void RemoveEnnemiesInRange(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex);
+	ACharacterBase* GetClosestEnnemyInRange();
 
 	void CheckAttackCondition();
 
@@ -40,6 +41,13 @@ private:
 
 	// Variables
 	TArray<AActor*> EnemyWaitingList;
+	TArray<AActor*> DetectedEnemies;
+	ACharacterBase * NearestEnemy;
+
+	bool CharacterBusy = false;
+
+
+
 	AActor* EnnemyToAttack;
 	AActor* CurrentlyAttacking;
 
@@ -47,6 +55,13 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack Settings", meta = (AllowPrivateAccess = "true"))
 	float AttackSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack Settings", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage*  AttackMontage;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack Settings", meta = (AllowPrivateAccess = "true"))
+	float AttackingRange;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<UDamageType> DamageType;

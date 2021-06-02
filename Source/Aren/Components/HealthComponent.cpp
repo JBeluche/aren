@@ -2,6 +2,9 @@
 
 
 #include "Aren/Components/HealthComponent.h"
+#include "Aren/Actors/CharacterBase.h"
+#include "Aren/Controllers/AIControllerBase.h"
+
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -17,39 +20,37 @@ UHealthComponent::UHealthComponent()
 // Called when the game starts
 void UHealthComponent::BeginPlay()
 {
-
 	Super::BeginPlay();
 
-	Health = DefaultHealth;
-
-	//GameModeRef = Cast<ATankGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	CurrentHealth = DefaultHealth;
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::TakeDamage);
 	
 }
 
-
 void UHealthComponent::TakeDamage(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-
 	if(Damage == 0)
 	{
-		
-
 		return;
 	}
 
-	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth);
+	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, DefaultHealth);
 
-	if(Health <= 0)
+	UE_LOG(LogTemp, Error, TEXT("%s Health is %f"), *GetOwner()->GetName(), CurrentHealth);
+
+
+	if(CurrentHealth <= 0)
 	{
+		ACharacterBase * Owner = Cast<ACharacterBase>(GetOwner());
 
-		/*if(GameModeRef)
-		{
-			GameModeRef->ActorDied(GetOwner());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Health component has no reference to game mode"));
-		}*/
+		if(DyingAnimation != nullptr){	Owner->PlayAnimationMontage(DyingAnimation, false);}
+		AAIControllerBase* Controller = Cast<AAIControllerBase>(Owner->GetInstigatorController());
+		Owner->Destroy();
+		Controller->UnPossess();
+		//Controller->HandleDeath();
+		Controller->Reset();
+		
+
+		UE_LOG(LogTemp, Error, TEXT("%s died"), *GetOwner()->GetName());
 	}
 }

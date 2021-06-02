@@ -21,14 +21,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnTouchBegin(ETouchIndex::Type FingerIndex, AActor* TouchedActor);
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* StaticMesh;
+	UStaticMeshComponent* InitialMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TArray<UStaticMesh*> BuildingUpgradesStaticMeshes;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
+
 
 };

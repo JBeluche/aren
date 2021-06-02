@@ -8,10 +8,10 @@
 ABuildingBase::ABuildingBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static mesh"));
-	RootComponent = StaticMesh;
+	InitialMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static mesh"));
+	RootComponent = InitialMesh;
 
 }
 
@@ -19,20 +19,6 @@ ABuildingBase::ABuildingBase()
 void ABuildingBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	OnInputTouchBegin.AddDynamic(this, &ABuildingBase::OnTouchBegin);
-
 	
 }
 
-// Called every frame
-void ABuildingBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ABuildingBase::OnTouchBegin(ETouchIndex::Type FingerIndex, AActor* TouchedActor)
-{
-	UE_LOG(LogTemp, Error, TEXT("Shit got real sad"));
-}

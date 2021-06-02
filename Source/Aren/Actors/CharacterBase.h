@@ -2,7 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "CoreMinimal.h" 	
+
+#include "BehaviorTree/BehaviorTree.h"
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
  	
@@ -14,7 +16,8 @@ class USphereComponent;
 class UAttackComponent;
 class UHealthComponent;
 class UCharacterCustomizationComponent;
- 
+
+
  //Enums
  UENUM(BlueprintType)
  enum class EFaction : uint8 
@@ -45,9 +48,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UBehaviorTree* GetBehaviorTree();
 
 	void SetSkeletalMesh(USkeletalMesh* GeneratedSkeletalMesh);
 	bool SetToSelectedPlayer();
+
+	void PlayAnimationMontage(UAnimMontage* MontageToPlay, bool bIsLooping);
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
@@ -71,7 +78,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (AllowPrivateAccess = "true"))
  	UParticleSystem* CircleParticle;
 
-
+	UPROPERTY(EditAnywhere)
+	UBehaviorTree* AIBehaviorTree;
 
 //Skeletal meshes
 

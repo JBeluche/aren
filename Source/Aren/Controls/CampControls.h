@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
+#include "Components/ListView.h"
 #include "Blueprint/UserWidget.h"
 #include "CampControls.generated.h"
-
 class AArenPlayerController;
 
 UCLASS()
@@ -22,8 +22,17 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CharacterView;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* B_Build;
+
+	UPROPERTY(meta = (BindWidget))
+	UListView* BuildingList;
+
 	UFUNCTION()
 	void SwitchToCharacter();
+
+	UFUNCTION()
+	void OpenBuildMenu();
 
 	AArenPlayerController* PlayerController;
 
