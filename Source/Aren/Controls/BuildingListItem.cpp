@@ -5,5 +5,9 @@
 
 bool UBuildingListItem::Initialize()
 {
-    return true;
+    Super::Initialize();
+
+    bool Success = Super::Initialize();
+
+    return Success;
 }

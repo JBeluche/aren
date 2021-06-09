@@ -7,6 +7,8 @@
 
 bool UCampControls::Initialize()
 {
+    Super::Initialize();
+
     bool Success = Super::Initialize();
     if(!Success) return false;
 
@@ -18,7 +20,7 @@ bool UCampControls::Initialize()
 
     PlayerController = Cast<AArenPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-    return true;
+    return Success;
 }
 
 void UCampControls::SwitchToCharacter()
@@ -29,6 +31,7 @@ void UCampControls::SwitchToCharacter()
 void UCampControls::OpenBuildMenu()
 {
     //Foreach building on the map
+    
         //Add a button
 
 }

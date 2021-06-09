@@ -17,7 +17,7 @@ class AREN_API UBuildingListItem : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual bool Initialize();
+	virtual bool Initialize() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))

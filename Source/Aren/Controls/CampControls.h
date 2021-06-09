@@ -15,9 +15,14 @@ class AREN_API UCampControls : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual bool Initialize();
+	virtual bool Initialize() override;
 
 private:
+
+	UFUNCTION()
+	void SwitchToCharacter();
+
+	AArenPlayerController* PlayerController;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CharacterView;
@@ -28,13 +33,14 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UListView* BuildingList;
 
-	UFUNCTION()
-	void SwitchToCharacter();
 
 	UFUNCTION()
 	void OpenBuildMenu();
 
-	AArenPlayerController* PlayerController;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UBuildingListItem> BuildingBlueprint;
+
+	
 
 
 };
