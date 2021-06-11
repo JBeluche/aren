@@ -68,7 +68,7 @@ bool ACharacterBase::SetToSelectedPlayer()
 
 		UGameplayStatics::SpawnEmitterAttached(
 			CircleParticle,
-			GetMesh(),			  //mesh to attach to
+			SkeletalMesh,			  //mesh to attach to
 			FName("MagicCircle"), //socket name
 			FVector(0, 0, -85.0f),	  //location relative to socket
 			FRotator(0, 0, 0),	  //rotation
