@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
-#include "Components/ListView.h"
+#include "Components/WrapBox.h"
 #include "Blueprint/UserWidget.h"
+#include "BuildingListItem.h"
+
 #include "CampControls.generated.h"
+
+
 class AArenPlayerController;
 
 UCLASS()
@@ -14,10 +18,9 @@ class AREN_API UCampControls : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
-	virtual bool Initialize() override;
 
-private:
+public:
+	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 	void SwitchToCharacter();
@@ -31,16 +34,12 @@ private:
 	class UButton* B_Build;
 
 	UPROPERTY(meta = (BindWidget))
-	UListView* BuildingList;
-
+	UWrapBox* BuildingItemContainer;
 
 	UFUNCTION()
 	void OpenBuildMenu();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UBuildingListItem> BuildingBlueprint;
-
-	
-
 
 };

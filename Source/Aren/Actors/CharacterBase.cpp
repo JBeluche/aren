@@ -93,8 +93,6 @@ void ACharacterBase::PlayAnimationMontage(UAnimMontage* MontageToPlay, bool bIsL
 {
 
 	//GetMesh()->PlayAnimation(Anim, bLoop);
-	int test {5 + 5};
-		UE_LOG(LogTemp, Error, TEXT("%i"), test);
 
 	SkeletalMesh->GetAnimInstance()->Montage_Play(MontageToPlay, 1, EMontagePlayReturnType::MontageLength);
 

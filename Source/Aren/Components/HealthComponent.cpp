@@ -36,7 +36,6 @@ void UHealthComponent::TakeDamage(AActor* DamageActor, float Damage, const UDama
 
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, DefaultHealth);
 
-	UE_LOG(LogTemp, Error, TEXT("%s Health is %f"), *GetOwner()->GetName(), CurrentHealth);
 
 
 	if(CurrentHealth <= 0)
@@ -51,6 +50,5 @@ void UHealthComponent::TakeDamage(AActor* DamageActor, float Damage, const UDama
 		Controller->Reset();
 		
 
-		UE_LOG(LogTemp, Error, TEXT("%s died"), *GetOwner()->GetName());
 	}
 }

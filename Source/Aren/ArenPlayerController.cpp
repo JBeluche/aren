@@ -172,12 +172,14 @@ void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 		Possess(MainPlayerPawn);
 		SetOwner();
 		//Get the player charater on the map and focus camera
+		
 		Controls = CreateWidget<UUserWidget>(this, CharacterControlClass, FName("Character Controls"));
 	}
 	else if (CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		Possess(CampPawn);
 		SetOwner();
+		
 		Controls = CreateWidget<UUserWidget>(this, CampControlClass, FName("Camp Controls"));
 	}
 
@@ -187,5 +189,4 @@ void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 void AArenPlayerController::SetOwner()
 {
 	MyOwner = Cast<AActor>(GetPawn());
-	UE_LOG(LogTemp, Error, TEXT("Am I Here?"));
 }

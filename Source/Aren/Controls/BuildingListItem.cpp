@@ -1,13 +1,19 @@
 // Copyright CreatingMountains
 
-
 #include "Aren/Controls/BuildingListItem.h"
 
-bool UBuildingListItem::Initialize()
+void UBuildingListItem::NativeConstruct()
 {
-    Super::Initialize();
+    Super::NativeConstruct();
+    TB_NameBuilding->SetText(FText::FromString(this->GetName()));
+    UE_LOG(LogTemp, Error, TEXT("Name 11 of widget is: %s"), *GetName());
 
-    bool Success = Super::Initialize();
-
-    return Success;
 }
+
+void UBuildingListItem::SetData(FText Text)
+{
+    TB_NameBuilding->SetText(Text);
+    UE_LOG(LogTemp, Error, TEXT("Name 22 of widget is: %s"), *GetName());
+
+}
+ 

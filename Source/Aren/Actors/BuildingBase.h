@@ -29,6 +29,8 @@ protected:
 
 public:	
 
+	FName BuildingName;
+	
 
 
 };

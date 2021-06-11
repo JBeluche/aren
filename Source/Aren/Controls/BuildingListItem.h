@@ -16,10 +16,11 @@ class AREN_API UBuildingListItem : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
-	virtual bool Initialize() override;
+public:
+	virtual void NativeConstruct() override;
 
-private:
+	void SetData(FText Text);
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* B_BuildUpgrade;
 
@@ -28,4 +29,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* TB_BuildUpgrade;
+
+
 };
