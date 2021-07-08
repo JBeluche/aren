@@ -19,7 +19,8 @@ class ACharacterBase;
  enum class ECurrentPawn : uint8 
  {
       ARENCHARACTER UMETA(DisplayName = "Aren Character"),
-      CAMP UMETA(DisplayName = "Camp")
+      CAMP UMETA(DisplayName = "Camp"),
+      DIALOG UMETA(DisplayName = "Dialog")
  };
 
 UCLASS()
@@ -34,6 +35,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     ECurrentPawn CurrentPawnEnum;
+
+	UUserWidget* GetDialogWidget();
+
 
 protected:
 
@@ -50,6 +54,7 @@ private:
 	//Varaibles C++
 	TSubclassOf<class UUserWidget> CharacterControlClass;
 	TSubclassOf<class UUserWidget> CampControlClass;
+	TSubclassOf<class UUserWidget> DialogWidget;
 	UUserWidget* Controls;
 	AActor* MyOwner;
 	

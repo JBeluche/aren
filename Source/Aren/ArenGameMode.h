@@ -8,6 +8,8 @@
 
 class ASpawnArea;
 class ACharacterBase;
+class AArenGameStateBase;
+class AStoryControllerBase;
 
 UCLASS(minimalapi)
 class AArenGameMode : public AGameModeBase
@@ -28,6 +30,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = Settings, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<ACharacterBase>> CharactersToSpawn;
 
+	UPROPERTY(EditAnywhere, Category = Settings, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<AStoryControllerBase>> StoriesList;
+
+
+
 	//Variables
 	float SecondsPerDay = 0.0f;
 	float ElapsedSeconds = 0.0f;
@@ -44,6 +51,8 @@ private:
 	void SetTimeTo(int8 Hours, int8 minutes);
 	FVector GetRandomSpawnLocation();
 	void SpawnEnemies();
+
+	AArenGameStateBase* GameState;
 
 };
 

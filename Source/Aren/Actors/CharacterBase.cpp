@@ -84,6 +84,7 @@ bool ACharacterBase::SetToSelectedPlayer()
 	return false;
 }
 
+
 UBehaviorTree* ACharacterBase::GetBehaviorTree()
 {
 	return AIBehaviorTree;
@@ -91,24 +92,5 @@ UBehaviorTree* ACharacterBase::GetBehaviorTree()
 
 void ACharacterBase::PlayAnimationMontage(UAnimMontage* MontageToPlay, bool bIsLooping)
 {
-
-	//GetMesh()->PlayAnimation(Anim, bLoop);
-
 	SkeletalMesh->GetAnimInstance()->Montage_Play(MontageToPlay, 1, EMontagePlayReturnType::MontageLength);
-
-	/*float PlayRate = 1.0f;
-	float StartingPosition = 0.0f;
-	const float MontageLength = SkeletalMesh->GetAnimInstance()->Montage_Play(MontageToPlay, PlayRate, EMontagePlayReturnType::MontageLength, StartingPosition);
-
-	if(MontageLength > 0.0f)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Montage ended"));
-	}*/
-	//	MontageToPlay->MontagePlay(MontageToPlay, 1, NAME_None);
-	
-	/*float AnimationLength = SkeletalMesh->GetSingleNodeInstance()->GetLength();
-	
-	animLen -= 0.34f;
-
-	GetWorldTimerManager().SetTimer(PostAnimTimerHandle, this, &MyActor::PostAnimFunc, animLen, false);*/
 }

@@ -54,7 +54,10 @@ public:
 	void SetSkeletalMesh(USkeletalMesh* GeneratedSkeletalMesh);
 	bool SetToSelectedPlayer();
 
+	UFUNCTION()
 	void PlayAnimationMontage(UAnimMontage* MontageToPlay, bool bIsLooping);
+
+
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))

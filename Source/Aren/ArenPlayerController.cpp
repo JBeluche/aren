@@ -19,9 +19,11 @@ AArenPlayerController::AArenPlayerController()
 
 	ConstructorHelpers::FClassFinder<UUserWidget> WBPControlsCharacter(TEXT("/Game/Blueprints/Widgets/WBP_ControlsPlayer"));
 	ConstructorHelpers::FClassFinder<UUserWidget> WBPControlsCamp(TEXT("/Game/Blueprints/Widgets/WBP_ControlsCamp"));
+	ConstructorHelpers::FClassFinder<UUserWidget> DialogWidgetClass(TEXT("/Game/Blueprints/Widgets/WBP_Dialog"));
 
 	CharacterControlClass = WBPControlsCharacter.Class;
 	CampControlClass = WBPControlsCamp.Class;
+	DialogWidget = DialogWidgetClass.Class;
 
 	CampPawn = nullptr;
 	MainPlayerPawn = nullptr;
@@ -44,7 +46,6 @@ void AArenPlayerController::BeginPlay()
 	SetOwner();
 	FingerTouchDuration = 0.0f;
 	LastFingerTouchDuration = 0.0f;
-	
 }
 
 void AArenPlayerController::PlayerTick(float DeltaTime)
@@ -52,6 +53,7 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 
 	Super::PlayerTick(DeltaTime);
 
+	//Player controls
 	if (CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		GetInputTouchState(ETouchIndex::Touch1, NewTouchLocation.X, NewTouchLocation.Y, bIsFingerTouching);
@@ -150,6 +152,7 @@ void AArenPlayerController::PlayerTick(float DeltaTime)
 			PreviousTouchLocation.Y = 0.0f;
 		}
 	}
+
 }
 
 void AArenPlayerController::SetupInputComponent()
@@ -164,7 +167,8 @@ void AArenPlayerController::SetupInputComponent()
 void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 {
 	CurrentPawnEnum = NewPawn;
-	Controls->RemoveFromViewport();
+	if(Controls){Controls->RemoveFromViewport();}
+	
 	UnPossess();
 
 	if (CurrentPawnEnum == ECurrentPawn::ARENCHARACTER)
@@ -172,21 +176,38 @@ void AArenPlayerController::SwitchPawn(ECurrentPawn NewPawn)
 		Possess(MainPlayerPawn);
 		SetOwner();
 		//Get the player charater on the map and focus camera
-		
+
 		Controls = CreateWidget<UUserWidget>(this, CharacterControlClass, FName("Character Controls"));
+		Controls->AddToViewport();
+
 	}
 	else if (CurrentPawnEnum == ECurrentPawn::CAMP)
 	{
 		Possess(CampPawn);
 		SetOwner();
-		
+
 		Controls = CreateWidget<UUserWidget>(this, CampControlClass, FName("Camp Controls"));
+		Controls->AddToViewport();
+
+	}
+	else if(CurrentPawnEnum == ECurrentPawn::DIALOG)
+	{
+		Possess(MainPlayerPawn);
+		SetOwner();
 	}
 
-	Controls->AddToViewport();
+
 }
 
 void AArenPlayerController::SetOwner()
 {
 	MyOwner = Cast<AActor>(GetPawn());
 }
+
+UUserWidget* AArenPlayerController::GetDialogWidget()
+{
+	return CreateWidget<UUserWidget>(this, DialogWidget, FName("Dialog Controls"));
+}
+
+
+

@@ -7,6 +7,7 @@
 #include "TimerManager.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "ArenGameStateBase.h"
 #include "Aren/Actors/SpawnArea.h"
 #include "Math/UnrealMathUtility.h"
 #include "Aren/Actors/CharacterBase.h"
@@ -15,10 +16,22 @@ AArenGameMode::AArenGameMode()
 {
 	// use our custom PlayerController class
 	PlayerControllerClass = AArenPlayerController::StaticClass();
+	
+	GameState = Cast<AArenGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+
 }
 
 void AArenGameMode::BeginPlay()
 {
+	//If the game is new
+	if(GameState)
+	{
+		if(GameState->bIsNewGame)
+		{
+		}
+	}
+	
+
 	//TimeOfDay
 	SecondsPerDay = float(MinutesPerDay) * 60.0f;
 	SetTimeTo(6, 0);
@@ -27,6 +40,8 @@ void AArenGameMode::BeginPlay()
 	Super::BeginPlay();
 	EnnemieCount = 12;
 	bHasSpawnedTonight = false;
+
+	UE_LOG(LogTemp, Error, TEXT("Main game mode has begun"));
 }
 
 void AArenGameMode::SetTimeTo(int8 Hours, int8 Minutes)
